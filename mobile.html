@@ -1793,7 +1793,7 @@ img{max-width:100%;}
         '<div class="editor-title-row">' +
           '<input type="date" id="setlist-date-input" value="' + escapeHtml(sl.date || "") + '" aria-label="Datum van de setlist">' +
           '<span class="badge badge-duration">' + formatDuration(total) + '</span>' +
-          '<button type="button" class="btn btn-small" data-action="export-setlist"' + (valid ? '' : ' disabled title="Minimaal 3 nummers nodig om te exporteren"') + '>' + ICON_DOWNLOAD + ' Download</button>' +
+          '<button type="button" class="btn btn-small mobile-download-btn" data-action="export-setlist" aria-label="Download setlist" title="Download setlist"' + (valid ? '' : ' disabled title="Minimaal 3 nummers nodig om te exporteren"') + '>' + ICON_DOWNLOAD + '<span class="mobile-download-label"> Download</span></button>' +
           (tracksMap.size === 0 ? '' :
             '<button type="button" class="btn btn-accent" id="open-add-existing-track-btn" aria-label="Nummer toevoegen aan setlist" title="Nummer toevoegen aan setlist">' + ICON_PLUS + '</button>') +
         '</div>' +
@@ -2629,9 +2629,13 @@ img{max-width:100%;}
   libraryPanel.addEventListener("click", function(e){
     var addBtn = e.target.closest && e.target.closest('[data-action="quick-add"]');
     if (addBtn){
-      if (!activeSetlistId){ showBanner("Selecteer eerst een setlist rechts, of maak er een aan.", "warn"); return; }
+      var id = addBtn.getAttribute("data-id");
+      if (!activeSetlistId){
+        createSetlistWithTrack("Setlist " + (setlistsMap.size + 1), id);
+        mobileSetlistSelected();
+        return;
+      }
       mutateSetlist(activeSetlistId, function(ids){
-        var id = addBtn.getAttribute("data-id");
         if (ids.indexOf(id) === -1) ids.push(id);
         return ids;
       });
